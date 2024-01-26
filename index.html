@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>suggested_sampling_points</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/suggested_payesh_1402_1403_1.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[35.97433076079547,59.37919364384747],[36.824810480784095,60.41295254734972]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_suggested_payesh_1402_1403_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">village_id</th>\
+                        <td class="visible-with-data" id="village_id">' + (feature.properties['village_id'] !== null ? autolinker.link(feature.properties['village_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['شهرستان'] !== null ? autolinker.link(feature.properties['شهرستان'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['دهستان'] !== null ? autolinker.link(feature.properties['دهستان'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['روستا مرجع'] !== null ? autolinker.link(feature.properties['روستا مرجع'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_suggested_payesh_1402_1403_1_0() {
+            return {
+                pane: 'pane_suggested_payesh_1402_1403_1',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,82,45,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_suggested_payesh_1402_1403_1');
+        map.getPane('pane_suggested_payesh_1402_1403_1').style.zIndex = 401;
+        map.getPane('pane_suggested_payesh_1402_1403_1').style['mix-blend-mode'] = 'normal';
+        var layer_suggested_payesh_1402_1403_1 = new L.geoJson(json_suggested_payesh_1402_1403_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_suggested_payesh_1402_1403_1',
+            layerName: 'layer_suggested_payesh_1402_1403_1',
+            pane: 'pane_suggested_payesh_1402_1403_1',
+            onEachFeature: pop_suggested_payesh_1402_1403_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_suggested_payesh_1402_1403_1_0(feature));
+            },
+        });
+        var cluster_suggested_payesh_1402_1403_1 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_suggested_payesh_1402_1403_1.addLayer(layer_suggested_payesh_1402_1403_1);
+
+        bounds_group.addLayer(layer_suggested_payesh_1402_1403_1);
+        cluster_suggested_payesh_1402_1403_1.addTo(map);
+            var title = new L.Control();
+            title.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info');
+                this.update();
+                return this._div;
+            };
+            title.update = function () {
+                this._div.innerHTML = '<h2>suggested_sampling_points</h2>';
+            };
+            title.addTo(map);
+            var abstract = new L.Control({'position':'bottomleft'});
+            abstract.onAdd = function (map) {
+                this._div = L.DomUtil.create('div',
+                'leaflet-control abstract');
+                this._div.id = 'abstract'
+
+                    abstract.show();
+                    return this._div;
+                };
+                abstract.show = function () {
+                    this._div.classList.remove("abstract");
+                    this._div.classList.add("abstractUncollapsed");
+                    this._div.innerHTML = 'This map is created for SBK organization.';
+            };
+            abstract.addTo(map);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/suggested_payesh_1402_1403_1.png" /> suggested_payesh_1402_1403': cluster_suggested_payesh_1402_1403_1,"OSM Standard": layer_OSMStandard_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: cluster_suggested_payesh_1402_1403_1,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'شهرستان'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"شهرستان": "str","روستا مرجع": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_ = document.createElement('div');
+            div_.id = "div_";
+            div_.className= "filterselect";
+            document.getElementById("menu").appendChild(div_);
+            sel_ = document.createElement('select');
+            sel_.multiple = true;
+            sel_.size = 10;
+            sel_.id = "sel_";
+            var _options_str = "<option value='' unselected></option>";
+            sel_.onchange = function(){filterFunc()};
+            _options_str  += '<option value="بینالود">بینالود</option>';
+            _options_str  += '<option value="تربت حیدریه">تربت حیدریه</option>';
+            _options_str  += '<option value="جغتای">جغتای</option>';
+            _options_str  += '<option value="درگز">درگز</option>';
+            _options_str  += '<option value="سرخس">سرخس</option>';
+            _options_str  += '<option value="صالح آباد">صالح آباد</option>';
+            _options_str  += '<option value="فریمان">فریمان</option>';
+            _options_str  += '<option value="قوچان">قوچان</option>';
+            _options_str  += '<option value="مشهد">مشهد</option>';
+            _options_str  += '<option value="نیشابور">نیشابور</option>';
+            _options_str  += '<option value="چناران">چناران</option>';
+            _options_str  += '<option value="کلات">کلات</option>';
+            _options_str  += '<option value="گلبهار">گلبهار</option>';
+            sel_.innerHTML = _options_str;
+            div_.appendChild(sel_);
+            var lab_ = document.createElement('div');
+            lab_.innerHTML = 'شهرستان';
+            lab_.className = 'filterlabel';
+            div_.appendChild(lab_);
+            var reset_ = document.createElement('div');
+            reset_.innerHTML = 'clear filter';
+            reset_.className = 'filterlabel';
+            reset_.onclick = function() {
+                var options = document.getElementById("sel_").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_.appendChild(reset_);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_ = document.createElement('div');
+            div_.id = "div_";
+            div_.className= "filterselect";
+            document.getElementById("menu").appendChild(div_);
+            sel_ = document.createElement('select');
+            sel_.multiple = true;
+            sel_.size = 10;
+            sel_.id = "sel_";
+            var _options_str = "<option value='' unselected></option>";
+            sel_.onchange = function(){filterFunc()};
+            _options_str  += '<option value="اب گرم">اب گرم</option>';
+            _options_str  += '<option value="ابجهان">ابجهان</option>';
+            _options_str  += '<option value="ابدراز">ابدراز</option>';
+            _options_str  += '<option value="ابشوری">ابشوری</option>';
+            _options_str  += '<option value="ابمال">ابمال</option>';
+            _options_str  += '<option value="ابوچناری">ابوچناری</option>';
+            _options_str  += '<option value="احمد آباد">احمد آباد</option>';
+            _options_str  += '<option value="ارته چشمه">ارته چشمه</option>';
+            _options_str  += '<option value="ارتینج">ارتینج</option>';
+            _options_str  += '<option value="ارچنگان">ارچنگان</option>';
+            _options_str  += '<option value="ازادده">ازادده</option>';
+            _options_str  += '<option value="اسد آباد">اسد آباد</option>';
+            _options_str  += '<option value="اسدخان">اسدخان</option>';
+            _options_str  += '<option value="اسفیز">اسفیز</option>';
+            _options_str  += '<option value="اسلام آباد/ گبر آباد/">اسلام آباد/ گبر آباد/</option>';
+            _options_str  += '<option value="اغال سنگ اب / باغ سنگان /">اغال سنگ اب / باغ سنگان /</option>';
+            _options_str  += '<option value="اق چشمه">اق چشمه</option>';
+            _options_str  += '<option value="اقداش">اقداش</option>';
+            _options_str  += '<option value="اقکاریز">اقکاریز</option>';
+            _options_str  += '<option value="الاتمان">الاتمان</option>';
+            _options_str  += '<option value="المتو">المتو</option>';
+            _options_str  += '<option value="النگ سفلی">النگ سفلی</option>';
+            _options_str  += '<option value="النگ علی بای">النگ علی بای</option>';
+            _options_str  += '<option value="امامقلی">امامقلی</option>';
+            _options_str  += '<option value="امیر آباد">امیر آباد</option>';
+            _options_str  += '<option value="اندرزی">اندرزی</option>';
+            _options_str  += '<option value="اوتانلو">اوتانلو</option>';
+            _options_str  += '<option value="ایده لیک">ایده لیک</option>';
+            _options_str  += '<option value="ایلانجیق">ایلانجیق</option>';
+            _options_str  += '<option value="اینچه سابلاغ">اینچه سابلاغ</option>';
+            _options_str  += '<option value="اینچه شهباز">اینچه شهباز</option>';
+            _options_str  += '<option value="اینچه کیکانلو">اینچه کیکانلو</option>';
+            _options_str  += '<option value="اینچگان">اینچگان</option>';
+            _options_str  += '<option value="بابارمضان">بابارمضان</option>';
+            _options_str  += '<option value="بابافرجی">بابافرجی</option>';
+            _options_str  += '<option value="بادخور">بادخور</option>';
+            _options_str  += '<option value="باغ کند">باغ کند</option>';
+            _options_str  += '<option value="باغگاه">باغگاه</option>';
+            _options_str  += '<option value="بام چنار">بام چنار</option>';
+            _options_str  += '<option value="بخت آباد">بخت آباد</option>';
+            _options_str  += '<option value="برزنون">برزنون</option>';
+            _options_str  += '<option value="بزنگان">بزنگان</option>';
+            _options_str  += '<option value="بشارت">بشارت</option>';
+            _options_str  += '<option value="بقمج (بقمچ)">بقمج (بقمچ)</option>';
+            _options_str  += '<option value="بنی تاک">بنی تاک</option>';
+            _options_str  += '<option value="بنیابید">بنیابید</option>';
+            _options_str  += '<option value="بیات">بیات</option>';
+            _options_str  += '<option value="بیدخان">بیدخان</option>';
+            _options_str  += '<option value="بیگلر">بیگلر</option>';
+            _options_str  += '<option value="تاج الدین">تاج الدین</option>';
+            _options_str  += '<option value="تبادکان">تبادکان</option>';
+            _options_str  += '<option value="تقی آباد">تقی آباد</option>';
+            _options_str  += '<option value="تلخ بخش">تلخ بخش</option>';
+            _options_str  += '<option value="تلگرد">تلگرد</option>';
+            _options_str  += '<option value="توزانلو">توزانلو</option>';
+            _options_str  += '<option value="تگن">تگن</option>';
+            _options_str  += '<option value="تیران">تیران</option>';
+            _options_str  += '<option value="تیرگان">تیرگان</option>';
+            _options_str  += '<option value="جرتوده">جرتوده</option>';
+            _options_str  += '<option value="جشن آباد/شهید آباد/">جشن آباد/شهید آباد/</option>';
+            _options_str  += '<option value="جعفریه / کاریزعمر/">جعفریه / کاریزعمر/</option>';
+            _options_str  += '<option value="جغال">جغال</option>';
+            _options_str  += '<option value="جلیل آباد">جلیل آباد</option>';
+            _options_str  += '<option value="جنید آباد">جنید آباد</option>';
+            _options_str  += '<option value="جنید دراز/گنبددراز">جنید دراز/گنبددراز</option>';
+            _options_str  += '<option value="حاتم قلعه">حاتم قلعه</option>';
+            _options_str  += '<option value="حاجی آباد">حاجی آباد</option>';
+            _options_str  += '<option value="حسن آباد">حسن آباد</option>';
+            _options_str  += '<option value="حسین آباد رخنه گل">حسین آباد رخنه گل</option>';
+            _options_str  += '<option value="حسین آبادصداقت">حسین آبادصداقت</option>';
+            _options_str  += '<option value="حسین آبادقلعه سرخ">حسین آبادقلعه سرخ</option>';
+            _options_str  += '<option value="حصار">حصار</option>';
+            _options_str  += '<option value="حصارجلال">حصارجلال</option>';
+            _options_str  += '<option value="حصارحاجی اسماعیل">حصارحاجی اسماعیل</option>';
+            _options_str  += '<option value="حصارلائین">حصارلائین</option>';
+            _options_str  += '<option value="حمامقلعه">حمامقلعه</option>';
+            _options_str  += '<option value="حکیم آباد">حکیم آباد</option>';
+            _options_str  += '<option value="خداداد">خداداد</option>';
+            _options_str  += '<option value="خریج">خریج</option>';
+            _options_str  += '<option value="خشت نادری">خشت نادری</option>';
+            _options_str  += '<option value="خمارتاش">خمارتاش</option>';
+            _options_str  += '<option value="خواجه آباد">خواجه آباد</option>';
+            _options_str  += '<option value="خواجه روشنایی">خواجه روشنایی</option>';
+            _options_str  += '<option value="خیر آباد">خیر آباد</option>';
+            _options_str  += '<option value="داغدار">داغدار</option>';
+            _options_str  += '<option value="دافی">دافی</option>';
+            _options_str  += '<option value="داودلی">داودلی</option>';
+            _options_str  += '<option value="درازاب">درازاب</option>';
+            _options_str  += '<option value="درخت بید">درخت بید</option>';
+            _options_str  += '<option value="دستجرد">دستجرد</option>';
+            _options_str  += '<option value="دهنه اخلمد">دهنه اخلمد</option>';
+            _options_str  += '<option value="دوبرار">دوبرار</option>';
+            _options_str  += '<option value="دوست آباد">دوست آباد</option>';
+            _options_str  += '<option value="دوست محمدبیک">دوست محمدبیک</option>';
+            _options_str  += '<option value="دوغائی">دوغائی</option>';
+            _options_str  += '<option value="دولت آباد">دولت آباد</option>';
+            _options_str  += '<option value="دولت خانه">دولت خانه</option>';
+            _options_str  += '<option value="دولت شانلو">دولت شانلو</option>';
+            _options_str  += '<option value="دولو">دولو</option>';
+            _options_str  += '<option value="دیزاوند">دیزاوند</option>';
+            _options_str  += '<option value="رباط">رباط</option>';
+            _options_str  += '<option value="رباطخاکستری">رباطخاکستری</option>';
+            _options_str  += '<option value="رباطشرف">رباطشرف</option>';
+            _options_str  += '<option value="رباطمیان دشت">رباطمیان دشت</option>';
+            _options_str  += '<option value="رضا آباد شرقی">رضا آباد شرقی</option>';
+            _options_str  += '<option value="رقیچه">رقیچه</option>';
+            _options_str  += '<option value="رهورد">رهورد</option>';
+            _options_str  += '<option value="رودخانه">رودخانه</option>';
+            _options_str  += '<option value="زلوغال">زلوغال</option>';
+            _options_str  += '<option value="زنگلانلو">زنگلانلو</option>';
+            _options_str  += '<option value="زهان">زهان</option>';
+            _options_str  += '<option value="زوباران">زوباران</option>';
+            _options_str  += '<option value="زیدانلو">زیدانلو</option>';
+            _options_str  += '<option value="سادات">سادات</option>';
+            _options_str  += '<option value="ساقی بیگ">ساقی بیگ</option>';
+            _options_str  += '<option value="سراب">سراب</option>';
+            _options_str  += '<option value="سربالا">سربالا</option>';
+            _options_str  += '<option value="سرجنگل">سرجنگل</option>';
+            _options_str  += '<option value="سررود">سررود</option>';
+            _options_str  += '<option value="سرزو">سرزو</option>';
+            _options_str  += '<option value="سرچشمه">سرچشمه</option>';
+            _options_str  += '<option value="سعد آباد">سعد آباد</option>';
+            _options_str  += '<option value="سلطان قلی">سلطان قلی</option>';
+            _options_str  += '<option value="سلطان میدان">سلطان میدان</option>';
+            _options_str  += '<option value="سلیم آباد">سلیم آباد</option>';
+            _options_str  += '<option value="سنگدیوار">سنگدیوار</option>';
+            _options_str  += '<option value="سهل آباد">سهل آباد</option>';
+            _options_str  += '<option value="سوهان">سوهان</option>';
+            _options_str  += '<option value="سوگلدی">سوگلدی</option>';
+            _options_str  += '<option value="سیاه سنگ">سیاه سنگ</option>';
+            _options_str  += '<option value="سیرزار">سیرزار</option>';
+            _options_str  += '<option value="سینی">سینی</option>';
+            _options_str  += '<option value="سینی نو">سینی نو</option>';
+            _options_str  += '<option value="شاه توت">شاه توت</option>';
+            _options_str  += '<option value="شاهرگ">شاهرگ</option>';
+            _options_str  += '<option value="شترسنگ">شترسنگ</option>';
+            _options_str  += '<option value="شرکت عمران شهر جدید بینالود (اوارشک)">شرکت عمران شهر جدید بینالود (اوارشک)</option>';
+            _options_str  += '<option value="شغل آباد">شغل آباد</option>';
+            _options_str  += '<option value="شفیع">شفیع</option>';
+            _options_str  += '<option value="شلگرد">شلگرد</option>';
+            _options_str  += '<option value="شمس خان">شمس خان</option>';
+            _options_str  += '<option value="شهر الماجق">شهر الماجق</option>';
+            _options_str  += '<option value="شهر حسن آباد">شهر حسن آباد</option>';
+            _options_str  += '<option value="شهر شهر کهنه">شهر شهر کهنه</option>';
+            _options_str  += '<option value="شهر شهرزو">شهر شهرزو</option>';
+            _options_str  += '<option value="شهر فرهادگرد">شهر فرهادگرد</option>';
+            _options_str  += '<option value="شهر فریمان">شهر فریمان</option>';
+            _options_str  += '<option value="شهر قلندرآباد">شهر قلندرآباد</option>';
+            _options_str  += '<option value="شهر مزرج">شهر مزرج</option>';
+            _options_str  += '<option value="شهر نوخندان">شهر نوخندان</option>';
+            _options_str  += '<option value="شهر چاپشلو">شهر چاپشلو</option>';
+            _options_str  += '<option value="شهر چنار">شهر چنار</option>';
+            _options_str  += '<option value="شهر چکنه">شهر چکنه</option>';
+            _options_str  += '<option value="شهر کدکن">شهر کدکن</option>';
+            _options_str  += '<option value="شهر کلات">شهر کلات</option>';
+            _options_str  += '<option value="شورلق">شورلق</option>';
+            _options_str  += '<option value="شورک توپکانلو">شورک توپکانلو</option>';
+            _options_str  += '<option value="شورک حاجی">شورک حاجی</option>';
+            _options_str  += '<option value="شوریچه سفلی">شوریچه سفلی</option>';
+            _options_str  += '<option value="شوریچه علیا">شوریچه علیا</option>';
+            _options_str  += '<option value="شوی">شوی</option>';
+            _options_str  += '<option value="شکرالله">شکرالله</option>';
+            _options_str  += '<option value="شیرتپه">شیرتپه</option>';
+            _options_str  += '<option value="شیلیگان">شیلیگان</option>';
+            _options_str  += '<option value="صدر آباد">صدر آباد</option>';
+            _options_str  += '<option value="طاهر آبادترکها">طاهر آبادترکها</option>';
+            _options_str  += '<option value="طاهر آبادترکها(جدید)">طاهر آبادترکها(جدید)</option>';
+            _options_str  += '<option value="طاهر آبادمیان /قلعه میان /">طاهر آبادمیان /قلعه میان /</option>';
+            _options_str  += '<option value="طرقطی">طرقطی</option>';
+            _options_str  += '<option value="عباس قلعه">عباس قلعه</option>';
+            _options_str  += '<option value="عبداله گیوی">عبداله گیوی</option>';
+            _options_str  += '<option value="عشق آباد">عشق آباد</option>';
+            _options_str  += '<option value="علاقه جنبان">علاقه جنبان</option>';
+            _options_str  += '<option value="علی آباد">علی آباد</option>';
+            _options_str  += '<option value="علی آبادبهمن جان">علی آبادبهمن جان</option>';
+            _options_str  += '<option value="عمارت">عمارت</option>';
+            _options_str  += '<option value="غزل اغول">غزل اغول</option>';
+            _options_str  += '<option value="فخر آباد">فخر آباد</option>';
+            _options_str  += '<option value="فرخان علیا">فرخان علیا</option>';
+            _options_str  += '<option value="فضل آباد">فضل آباد</option>';
+            _options_str  += '<option value="فهنه">فهنه</option>';
+            _options_str  += '<option value="فیروز آباد">فیروز آباد</option>';
+            _options_str  += '<option value="قازان بیک">قازان بیک</option>';
+            _options_str  += '<option value="قرقره">قرقره</option>';
+            _options_str  += '<option value="قرقروک علیا / قرقروک بالا/">قرقروک علیا / قرقروک بالا/</option>';
+            _options_str  += '<option value="قره تیکان/ شهید اسلام توکلی">قره تیکان/ شهید اسلام توکلی</option>';
+            _options_str  += '<option value="قره چای">قره چای</option>';
+            _options_str  += '<option value="قره گل">قره گل</option>';
+            _options_str  += '<option value="قریه شرف">قریه شرف</option>';
+            _options_str  += '<option value="قزل قلعه">قزل قلعه</option>';
+            _options_str  += '<option value="قزلق">قزلق</option>';
+            _options_str  += '<option value="قشلاق">قشلاق</option>';
+            _options_str  += '<option value="قشه توت">قشه توت</option>';
+            _options_str  += '<option value="قصر">قصر</option>';
+            _options_str  += '<option value="قلعه حمام حاجی رسول /قلعه حمام حاج رسول">قلعه حمام حاجی رسول /قلعه حمام حاج رسول</option>';
+            _options_str  += '<option value="قلعه عباس/ قلعه عباسی /">قلعه عباس/ قلعه عباسی /</option>';
+            _options_str  += '<option value="قلعه نو">قلعه نو</option>';
+            _options_str  += '<option value="قلعه نوفریمان">قلعه نوفریمان</option>';
+            _options_str  += '<option value="قلعه چه">قلعه چه</option>';
+            _options_str  += '<option value="قله زو">قله زو</option>';
+            _options_str  += '<option value="قلیچ آباد/شهید مهدئ هنرمند">قلیچ آباد/شهید مهدئ هنرمند</option>';
+            _options_str  += '<option value="قنداب">قنداب</option>';
+            _options_str  += '<option value="قنقر">قنقر</option>';
+            _options_str  += '<option value="قولجق">قولجق</option>';
+            _options_str  += '<option value="مایان علیا">مایان علیا</option>';
+            _options_str  += '<option value="مایان وسطی">مایان وسطی</option>';
+            _options_str  += '<option value="محب سراج">محب سراج</option>';
+            _options_str  += '<option value="محله حسن شاه عالمی">محله حسن شاه عالمی</option>';
+            _options_str  += '<option value="محمدتقی بیگ">محمدتقی بیگ</option>';
+            _options_str  += '<option value="محمودی">محمودی</option>';
+            _options_str  += '<option value="مزرعه نمونه">مزرعه نمونه</option>';
+            _options_str  += '<option value="مشکانلو/کلاته ملا قلی">مشکانلو/کلاته ملا قلی</option>';
+            _options_str  += '<option value="مغان">مغان</option>';
+            _options_str  += '<option value="ممیزاب">ممیزاب</option>';
+            _options_str  += '<option value="مومن آباد">مومن آباد</option>';
+            _options_str  += '<option value="موچنان">موچنان</option>';
+            _options_str  += '<option value="میامی">میامی</option>';
+            _options_str  += '<option value="میر آباد">میر آباد</option>';
+            _options_str  += '<option value="نعتو">نعتو</option>';
+            _options_str  += '<option value="نفطه">نفطه</option>';
+            _options_str  += '<option value="نقدعلی سفلی">نقدعلی سفلی</option>';
+            _options_str  += '<option value="نو آباداسپیان">نو آباداسپیان</option>';
+            _options_str  += '<option value="نیت">نیت</option>';
+            _options_str  += '<option value="نیشابورک">نیشابورک</option>';
+            _options_str  += '<option value="هندل آباد">هندل آباد</option>';
+            _options_str  += '<option value="هی هی">هی هی</option>';
+            _options_str  += '<option value="پالکانلوعلیا">پالکانلوعلیا</option>';
+            _options_str  += '<option value="پرکند">پرکند</option>';
+            _options_str  += '<option value="پس پشته">پس پشته</option>';
+            _options_str  += '<option value="پس کمر">پس کمر</option>';
+            _options_str  += '<option value="پل گرد">پل گرد</option>';
+            _options_str  += '<option value="پنگی">پنگی</option>';
+            _options_str  += '<option value="چاله زرد">چاله زرد</option>';
+            _options_str  += '<option value="چاه قیس">چاه قیس</option>';
+            _options_str  += '<option value="چاه نیک بین">چاه نیک بین</option>';
+            _options_str  += '<option value="چرم کهنه">چرم کهنه</option>';
+            _options_str  += '<option value="چشمه زرد">چشمه زرد</option>';
+            _options_str  += '<option value="چشمه عبدالکریم">چشمه عبدالکریم</option>';
+            _options_str  += '<option value="چقر">چقر</option>';
+            _options_str  += '<option value="چنبرغربال">چنبرغربال</option>';
+            _options_str  += '<option value="چهچهه">چهچهه</option>';
+            _options_str  += '<option value="چکنه علیا">چکنه علیا</option>';
+            _options_str  += '<option value="چکودر">چکودر</option>';
+            _options_str  += '<option value="کاریزک">کاریزک</option>';
+            _options_str  += '<option value="کال شور">کال شور</option>';
+            _options_str  += '<option value="کال پرنده">کال پرنده</option>';
+            _options_str  += '<option value="کال کراب /کال کرو/">کال کراب /کال کرو/</option>';
+            _options_str  += '<option value="کالو">کالو</option>';
+            _options_str  += '<option value="کاهو">کاهو</option>';
+            _options_str  += '<option value="کته شمشیرعلیا">کته شمشیرعلیا</option>';
+            _options_str  += '<option value="کرناوه شیرین">کرناوه شیرین</option>';
+            _options_str  += '<option value="کریم آباد">کریم آباد</option>';
+            _options_str  += '<option value="کل ملک آباد">کل ملک آباد</option>';
+            _options_str  += '<option value="کلاته الیاس">کلاته الیاس</option>';
+            _options_str  += '<option value="کلاته توت/ توت">کلاته توت/ توت</option>';
+            _options_str  += '<option value="کلاته حاجی علی داد">کلاته حاجی علی داد</option>';
+            _options_str  += '<option value="کلاته زمان">کلاته زمان</option>';
+            _options_str  += '<option value="کلاته صاحبداد">کلاته صاحبداد</option>';
+            _options_str  += '<option value="کلاته ملامحمد/ ملامحمد/">کلاته ملامحمد/ ملامحمد/</option>';
+            _options_str  += '<option value="کلاته ملو">کلاته ملو</option>';
+            _options_str  += '<option value="کلاته میدان">کلاته میدان</option>';
+            _options_str  += '<option value="کلاته میرحسن">کلاته میرحسن</option>';
+            _options_str  += '<option value="کلاته کندی">کلاته کندی</option>';
+            _options_str  += '<option value="کلر">کلر</option>';
+            _options_str  += '<option value="کلوخی">کلوخی</option>';
+            _options_str  += '<option value="کلیدر">کلیدر</option>';
+            _options_str  += '<option value="کماج خور">کماج خور</option>';
+            _options_str  += '<option value="کهنه فرود">کهنه فرود</option>';
+            _options_str  += '<option value="کوه سخت">کوه سخت</option>';
+            _options_str  += '<option value="گرو">گرو</option>';
+            _options_str  += '<option value="گل بوته">گل بوته</option>';
+            _options_str  += '<option value="گل بین">گل بین</option>';
+            _options_str  += '<option value="گل شیخ">گل شیخ</option>';
+            _options_str  += '<option value="گلزار">گلزار</option>';
+            _options_str  += '<option value="گلمیم">گلمیم</option>';
+            _options_str  += '<option value="گورخار">گورخار</option>';
+            _options_str  += '<option value="گوش لاغر/قوش /">گوش لاغر/قوش /</option>';
+            _options_str  += '<option value="یادگار">یادگار</option>';
+            _options_str  += '<option value="یزدان آباد سفلی">یزدان آباد سفلی</option>';
+            _options_str  += '<option value="یساقی">یساقی</option>';
+            _options_str  += '<option value="یعقوبی">یعقوبی</option>';
+            _options_str  += '<option value="ینگی قلعه">ینگی قلعه</option>';
+            _options_str  += '<option value="یوسف آباد">یوسف آباد</option>';
+            _options_str  += '<option value="یکه باغ">یکه باغ</option>';
+            sel_.innerHTML = _options_str;
+            div_.appendChild(sel_);
+            var lab_ = document.createElement('div');
+            lab_.innerHTML = 'روستا مرجع';
+            lab_.className = 'filterlabel';
+            div_.appendChild(lab_);
+            var reset_ = document.createElement('div');
+            reset_.innerHTML = 'clear filter';
+            reset_.className = 'filterlabel';
+            reset_.onclick = function() {
+                var options = document.getElementById("sel_").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_.appendChild(reset_);
+        </script>
+    </body>
+</html>
